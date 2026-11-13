@@ -1,0 +1,21 @@
+<div style="padding: 24px; font-family: sans-serif;">
+  <h1>FleetPulse Frontend Connected! </h1>
+
+  @if (stats(); as s) {
+    <p>
+      Total fleet vehicles: <strong>{{ s.totalVehicles }}</strong> |
+      Total maintenance budget: <strong>{{ s.totalFleetMaintenanceCost }} PLN</strong>
+    </p>
+  }
+
+  <h3>Vehicles from backend:</h3>
+  <ul>
+    @for (v of vehicles(); track v.id) {
+      <li>
+        {{ v.make }} {{ v.model }} ({{ v.licensePlate }}) - {{ v.currentMileage }} km [{{ v.status }}]
+      </li>
+    } @empty {
+      <li>No vehicles found in fleet.</li>
+    }
+  </ul>
+</div>
