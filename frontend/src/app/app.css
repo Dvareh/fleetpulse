@@ -1,0 +1,258 @@
+:host {
+  display: block;
+}
+
+.page-layout {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-nav {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 650;
+}
+
+.page-body {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  flex: 1;
+}
+
+.page-head {
+  margin-bottom: 24px;
+}
+
+.page-head h1 {
+  font-size: 2rem;
+  font-weight: 650;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: var(--gray);
+  margin-bottom: 0;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-box {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.stat-num.total {
+  color: var(--green);
+}
+
+.currency {
+  font-size: 1.125rem;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.stat-hint {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: var(--gray);
+}
+
+.health-badges {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+}
+
+.badge-success {
+  color: var(--success);
+  background: var(--success-bg);
+  border-color: #bcd4b3;
+}
+
+.badge-warning {
+  color: var(--warning);
+  background: var(--warning-bg);
+  border-color: #dfcd9d;
+}
+
+.badge-danger {
+  color: var(--red);
+  background: var(--light-red);
+  border-color: #e5b9b7;
+}
+
+.filters-bar {
+  margin-bottom: 24px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.vehicle-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.vehicle-card:hover {
+  border-color: var(--dark-border);
+  transform: translateY(-2px);
+}
+
+.vehicle-card.in-service-border {
+  border-inline-start: 4px solid var(--warning);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.vehicle-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.vehicle-year {
+  font-size: 0.875rem;
+  color: var(--gray);
+}
+
+.license-wrapper {
+  margin-bottom: 16px;
+  display: flex;
+}
+
+.plate-number {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1.5px solid var(--dark-border);
+  border-radius: 4px;
+  background: var(--light-bg);
+  font-family: monospace, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(45, 48, 41, 0.05);
+}
+
+.card-meta {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  margin-bottom: 16px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+}
+
+.meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.meta-label {
+  color: var(--gray);
+}
+
+.meta-val {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--light-green);
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.card-btn-wrap {
+  display: flex;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.empty {
+  padding: 32px;
+  border: 1px dashed var(--dark-border);
+  border-radius: 8px;
+  color: var(--gray);
+  background: var(--card-bg);
+  text-align: center;
+}

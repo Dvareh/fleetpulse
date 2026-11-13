@@ -1,21 +1,120 @@
-<div style="padding: 24px; font-family: sans-serif;">
-  <h1>FleetPulse Frontend Connected! </h1>
+<div class="page-layout">
+  <header class="top-nav">
+    <div class="logo">
+      <span>FleetPulse</span>
+    </div>
+  </header>
 
-  @if (stats(); as s) {
-    <p>
-      Total fleet vehicles: <strong>{{ s.totalVehicles }}</strong> |
-      Total maintenance budget: <strong>{{ s.totalFleetMaintenanceCost }} PLN</strong>
-    </p>
-  }
+  <main class="page-body">
+    <div class="page-head">
+      <div>
+        <h1>Fleet Dashboard</h1>
+        <p class="subtitle">Overview of vehicles, maintenance schedules and cost analytics</p>
+      </div>
+    </div>
 
-  <h3>Vehicles from backend:</h3>
-  <ul>
-    @for (v of vehicles(); track v.id) {
-      <li>
-        {{ v.make }} {{ v.model }} ({{ v.licensePlate }}) - {{ v.currentMileage }} km [{{ v.status }}]
-      </li>
-    } @empty {
-      <li>No vehicles found in fleet.</li>
+    @if (stats(); as s) {
+      <section class="stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Total Fleet</div>
+          <div class="stat-num total">{{ s.totalVehicles }}</div>
+          <div class="stat-hint">{{ s.activeVehicles }} Active | {{ s.inServiceVehicles }} In Service</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-label">Fleet Health</div>
+          <div class="health-badges">
+            <span class="badge badge-success">{{ s.healthyCount }} Good</span>
+            <span class="badge badge-warning">{{ s.warningCount }} Warning</span>
+            <span class="badge badge-danger">{{ s.criticalCount }} Overdue</span>
+          </div>
+          <div class="stat-hint">Predictive maintenance score</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-label">Maintenance Spend</div>
+          <div class="stat-num">{{ s.totalFleetMaintenanceCost | number:'1.2-2' }} <span class="currency">PLN</span></div>
+          <div class="stat-hint">Avg ~{{ s.averageCostPerVehicle | number:'1.2-2' }} PLN / vehicle</div>
+        </div>
+      </section>
     }
-  </ul>
+
+    <div class="filters-bar">
+      <div class="filter-actions">
+        <button
+          [class.btn-main]="selectedFilter() === 'ALL'"
+          (click)="setFilter('ALL')">
+          All ({{ vehicles().length }})
+        </button>
+        <button
+          [class.btn-main]="selectedFilter() === 'ACTIVE'"
+          (click)="setFilter('ACTIVE')">
+          Active
+        </button>
+        <button
+          [class.btn-main]="selectedFilter() === 'IN_SERVICE'"
+          (click)="setFilter('IN_SERVICE')">
+          In Service
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="empty">Loading fleet vehicles...</div>
+    } @else {
+      <section class="vehicles-grid">
+        @for (vehicle of filteredVehicles(); track vehicle.id) {
+          <div class="vehicle-card" [class.in-service-border]="vehicle.status === 'IN_SERVICE'">
+
+            <div class="card-top">
+
+              <div>
+                <h2 class="vehicle-title">{{ vehicle.make }} {{ vehicle.model }}</h2>
+                <span class="vehicle-year">{{ vehicle.productionYear }}</span>
+              </div>
+
+              <span class="badge" [class.badge-success]="vehicle.status === 'ACTIVE'" [class.badge-warning]="vehicle.status === 'IN_SERVICE'">
+                {{ vehicle.status }}
+              </span>
+
+            </div>
+
+            <div class="license-wrapper">
+                <div class="plate-number">{{ vehicle.licensePlate }}</div>
+            </div>
+
+            <div class="card-meta">
+
+              <div class="meta-row">
+                <span class="meta-label">Current Mileage:</span>
+                <span class="meta-val">{{ vehicle.currentMileage | number }} km</span>
+              </div>
+
+              <div class="meta-row">
+                <span class="meta-label">Fuel Type:</span>
+                <span class="tag">{{ vehicle.fuelType }}</span>
+              </div>
+
+              <div class="meta-row">
+                <span class="meta-label">Service History:</span>
+                <span class="meta-val">{{ vehicle.totalMaintenanceCount }} records</span>
+              </div>
+
+            </div>
+
+            <div class="card-btn-wrap">
+              <button class="btn-main full-width">
+                View Service & Health
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty">
+            <h3>No vehicles found</h3>
+            <p>No vehicles match the selected filter criteria.</p>
+          </div>
+        }
+      </section>
+    }
+  </main>
 </div>
