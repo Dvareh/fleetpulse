@@ -1,1 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  color-scheme: light;
+  --page-bg: #ede4d5;
+  --card-bg: #f8f1e5;
+  --light-bg: #fcf7ef;
+  --soft-bg: #f2e9da;
+  --text: #2d3029;
+  --gray: #666357;
+  --border: #d8ccb9;
+  --dark-border: #938775;
+  --green: #34714a;
+  --green-hover: #285b3a;
+  --light-green: #dee5d5;
+  --red: #9e3330;
+  --light-red: #f3e0d6;
+  --success: #29613e;
+  --success-bg: #e3eadb;
+  --warning: #7a520b;
+  --warning-bg: #f1e5c7;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+h1, h2, h3, h4, p {
+  margin-block-start: 0;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--dark-border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--soft-bg);
+  border-color: var(--gray);
+}
+
+.btn-main {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.btn-main:hover:not(:disabled) {
+  background: var(--green-hover);
+  border-color: var(--green-hover);
+  color: #fff;
+}
