@@ -9,6 +9,8 @@ import {
   VehicleHealth,
   MaintenanceRecord,
   MaintenanceCreateRequest,
+  VehicleCreateRequest,
+  FuelType,
 } from './models/fleet.models';
 import { FormsModule } from '@angular/forms';
 
@@ -39,6 +41,23 @@ export class App implements OnInit {
   isModalLoading = signal<boolean>(false);
 
   showAddForm = signal<boolean>(false);
+
+  showAddVehicleModal = signal<boolean>(false);
+  vehicleFormError = signal<string | null>(null);
+
+  newVehicle: VehicleCreateRequest = {
+    make: '',
+    model: '',
+    licensePlate: '',
+    productionYear: new Date().getFullYear(),
+    currentMileage: 0,
+    fuelType: 'PETROL',
+    status: 'ACTIVE',
+  };
+
+  fuelTypes: FuelType[] = ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'];
+
+  vehicleStatuses: VehicleStatus[] = ['ACTIVE', 'IN_SERVICE', 'DECOMMISSIONED'];
 
   formError = signal<string | null>(null);
 
@@ -187,5 +206,71 @@ export class App implements OnInit {
     if (score >= 80) return 'score-good';
     if (score >= 40) return 'score-warning';
     return 'score-critical';
+  }
+
+  toggleAddVehicleModal(): void {
+    this.showAddVehicleModal.update((val) => !val);
+    this.vehicleFormError.set(null);
+  }
+
+  submitNewVehicle(): void {
+    this.vehicleFormError.set(null);
+    this.api.createVehicle(this.newVehicle).subscribe({
+      next: () => {
+        this.showAddVehicleModal.set(false);
+        this.newVehicle = {
+          make: '',
+          model: '',
+          licensePlate: '',
+          productionYear: new Date().getFullYear(),
+          currentMileage: 0,
+          fuelType: 'PETROL',
+          status: 'ACTIVE',
+        };
+        this.loadFleetData();
+      },
+      error: (err) => {
+        if (err.error?.validationErrors) {
+          const messages = Object.values(err.error.validationErrors).join('. ');
+          this.vehicleFormError.set(messages);
+        } else if (err.error?.message) {
+          this.vehicleFormError.set(err.error.message);
+        } else {
+          this.vehicleFormError.set('Failed to register vehicle. Please check inputs.');
+        }
+      },
+    });
+  }
+
+  changeVehicleStatus(vehicle: Vehicle, nextStatus: VehicleStatus): void {
+    this.api
+      .updateVehicle(vehicle.id, {
+        currentMileage: vehicle.currentMileage,
+        status: nextStatus,
+      })
+      .subscribe({
+        next: (updated) => {
+          if (this.selectedVehicle()?.id === vehicle.id) {
+            this.selectedVehicle.set(updated);
+          }
+          this.loadFleetData();
+        },
+      });
+  }
+
+  deleteVehicle(vehicleId: number): void {
+    if (
+      !confirm(
+        'Are you sure you want to remove this vehicle from fleet? All maintenance logs will be deleted.',
+      )
+    )
+      return;
+
+    this.api.deleteVehicle(vehicleId).subscribe({
+      next: () => {
+        this.closeModal();
+        this.loadFleetData();
+      },
+    });
   }
 }

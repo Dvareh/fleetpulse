@@ -79,6 +79,11 @@
   border-inline-start: 4px solid var(--warning);
 }
 
+.vehicle-card.decommissioned-border {
+  opacity: 0.75; border-inline-start: 4px solid var(--gray);
+}
+
+
 .card-top {
   display: flex;
   justify-content: space-between;
@@ -126,6 +131,7 @@
 
 .badge-success { color: var(--success); background: var(--success-bg); }
 .badge-warning { color: var(--warning); background: var(--warning-bg); }
+.badge-decommissioned { color: var(--gray); background: var(--soft-bg); border-color: var(--dark-border); }
 .badge-danger  { color: var(--red);     background: var(--light-red); }
 
 .health-badges, .filter-actions {
@@ -135,6 +141,11 @@
 }
 
 .filters-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
