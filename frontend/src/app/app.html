@@ -49,7 +49,11 @@
         <button [class.btn-main]="selectedFilter() === 'IN_SERVICE'" (click)="setFilter('IN_SERVICE')">
           In Service
         </button>
+        <button [class.btn-main]="selectedFilter() === 'DECOMMISSIONED'" (click)="setFilter('DECOMMISSIONED')">
+          Decommissioned
+        </button>
       </div>
+      <button class="btn-main" (click)="toggleAddVehicleModal()">+ Add Vehicle</button>
     </div>
 
     @if (isLoading()) {
@@ -63,8 +67,11 @@
                 <h2 class="vehicle-title">{{ vehicle.make }} {{ vehicle.model }}</h2>
                 <span class="vehicle-year">{{ vehicle.productionYear }}</span>
               </div>
-              <span class="badge" [class.badge-success]="vehicle.status === 'ACTIVE'" [class.badge-warning]="vehicle.status === 'IN_SERVICE'">
-                {{ formatLabel(vehicle.status) }}
+              <span class="badge"
+                    [class.badge-success]="vehicle.status === 'ACTIVE'"
+                    [class.badge-warning]="vehicle.status === 'IN_SERVICE'"
+                    [class.badge-decommissioned]="vehicle.status === 'DECOMMISSIONED'">
+              {{ formatLabel(vehicle.status) }}
               </span>
             </div>
 
@@ -225,8 +232,66 @@
         }
 
         <div class="actions">
-          <button (click)="closeModal()">Close</button>
+          <button class="btn-danger-text" (click)="deleteVehicle(vehicle.id)">Delete Vehicle</button>
+          <select [ngModel]="vehicle.status" (ngModelChange)="changeVehicleStatus(vehicle, $event)">
+            @for (st of vehicleStatuses; track st) {
+              <option [value]="st">{{ formatLabel(st) }}</option>
+            }
+          </select>
+          <button class="btn-main" (click)="closeModal()">Close</button>
         </div>
+      </div>
+    </div>
+  }
+
+  @if (showAddVehicleModal()) {
+    <div class="overlay" (click)="toggleAddVehicleModal()">
+      <div class="modal card" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h2>Register New Vehicle</h2>
+        </div>
+
+        <form (ngSubmit)="submitNewVehicle()">
+          <div class="form-grid">
+            <div class="field">
+              <label>Make</label>
+              <input type="text" [(ngModel)]="newVehicle.make" name="make" placeholder="e.g. Škoda" required>
+            </div>
+            <div class="field">
+              <label>Model</label>
+              <input type="text" [(ngModel)]="newVehicle.model" name="model" placeholder="e.g. Octavia" required>
+            </div>
+            <div class="field">
+              <label>License Plate</label>
+              <input type="text" [(ngModel)]="newVehicle.licensePlate" name="licensePlate" placeholder="e.g. LU 7711B" required>
+            </div>
+            <div class="field">
+              <label>Production Year</label>
+              <input type="number" [(ngModel)]="newVehicle.productionYear" name="productionYear" required min="1990">
+            </div>
+            <div class="field">
+              <label>Current Mileage (km)</label>
+              <input type="number" [(ngModel)]="newVehicle.currentMileage" name="currentMileage" required min="0">
+            </div>
+            <div class="field">
+              <label>Fuel Type</label>
+              <select [(ngModel)]="newVehicle.fuelType" name="fuelType">
+                @for (fuel of fuelTypes; track fuel) {
+                  <option [value]="fuel">{{ formatLabel(fuel) }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          @if (vehicleFormError(); as err) {
+            <div class="form-error">{{ err }}</div>
+          }
+
+          <div class="actions">
+            <button type="button" (click)="toggleAddVehicleModal()">Cancel</button>
+            <button type="submit" class="btn-main">Register Vehicle</button>
+          </div>
+        </form>
       </div>
     </div>
   }
