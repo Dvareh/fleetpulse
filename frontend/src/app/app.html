@@ -176,6 +176,10 @@
                   <label>Cost (PLN)</label>
                   <input type="number" [(ngModel)]="newService.cost" name="cost" required min="0" step="0.01">
                 </div>
+                <div class="field">
+                  <label>Next Interval (km)</label>
+                  <input type="number" [(ngModel)]="newService.nextServiceIntervalKm" name="nextServiceIntervalKm" min="1000" step="1000">
+                </div>
                 <div class="field field-full">
                   <label>Description / Notes</label>
                   <input type="text" [(ngModel)]="newService.description" name="description" placeholder="e.g., Oil and filter change 5W30">
