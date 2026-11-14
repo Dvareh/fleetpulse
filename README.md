@@ -127,9 +127,15 @@ Open `http://localhost:4200` in your browser.
 
 ---
 
-## Git Workflow & Branching Strategy
+## Git Workflow
 
-Development followed a structured Jira-style branching workflow:
 - `main` - Production-ready releases.
 - `develop` - Integration branch.
 - Feature branches (`task-backend/APP-xxx`, `task-frontend/APP-xxx`, `docs/APP-xxx`) merged via Pull Requests.
+
+---
+
+## AI Usage
+- Reviewing repetitive boilerplate code (DTOs, entity mappings, and validation rules).
+- Refactoring and optimizing CSS (unifying card styles, layout cleanup, and improving table responsiveness).
+- Code review and proofreading technical documentation in the README file.
