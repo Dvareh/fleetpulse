@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FleetDashboardStatsResponse<BigDecimal> {
+public class FleetDashboardStatsResponse {
     private int totalVehicles;
     private int activeVehicles;
     private int inServiceVehicles;
