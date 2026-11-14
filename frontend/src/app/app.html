@@ -1,7 +1,7 @@
 <div class="page-layout">
   <header class="top-nav">
     <div class="logo">
-      <span>FleetPulse</span>
+      FleetPulse
     </div>
   </header>
 
@@ -15,23 +15,22 @@
 
     @if (stats(); as s) {
       <section class="stats-row">
-        <div class="stat-box">
+        <div class="card">
           <div class="stat-label">Total Fleet</div>
           <div class="stat-num total">{{ s.totalVehicles }}</div>
           <div class="stat-hint">{{ s.activeVehicles }} Active | {{ s.inServiceVehicles }} In Service</div>
         </div>
 
-        <div class="stat-box">
+        <div class="card">
           <div class="stat-label">Fleet Health</div>
           <div class="health-badges">
             <span class="badge badge-success">{{ s.healthyCount }} Good</span>
             <span class="badge badge-warning">{{ s.warningCount }} Warning</span>
             <span class="badge badge-danger">{{ s.criticalCount }} Overdue</span>
           </div>
-          <div class="stat-hint">Predictive maintenance score</div>
         </div>
 
-        <div class="stat-box">
+        <div class="card">
           <div class="stat-label">Maintenance Spend</div>
           <div class="stat-num">{{ s.totalFleetMaintenanceCost | number:'1.2-2' }} <span class="currency">PLN</span></div>
           <div class="stat-hint">Avg ~{{ s.averageCostPerVehicle | number:'1.2-2' }} PLN / vehicle</div>
@@ -41,19 +40,13 @@
 
     <div class="filters-bar">
       <div class="filter-actions">
-        <button
-          [class.btn-main]="selectedFilter() === 'ALL'"
-          (click)="setFilter('ALL')">
+        <button [class.btn-main]="selectedFilter() === 'ALL'" (click)="setFilter('ALL')">
           All ({{ vehicles().length }})
         </button>
-        <button
-          [class.btn-main]="selectedFilter() === 'ACTIVE'"
-          (click)="setFilter('ACTIVE')">
+        <button [class.btn-main]="selectedFilter() === 'ACTIVE'" (click)="setFilter('ACTIVE')">
           Active
         </button>
-        <button
-          [class.btn-main]="selectedFilter() === 'IN_SERVICE'"
-          (click)="setFilter('IN_SERVICE')">
+        <button [class.btn-main]="selectedFilter() === 'IN_SERVICE'" (click)="setFilter('IN_SERVICE')">
           In Service
         </button>
       </div>
@@ -64,49 +57,38 @@
     } @else {
       <section class="vehicles-grid">
         @for (vehicle of filteredVehicles(); track vehicle.id) {
-          <div class="vehicle-card" [class.in-service-border]="vehicle.status === 'IN_SERVICE'">
-
+          <div class="card vehicle-card" [class.in-service-border]="vehicle.status === 'IN_SERVICE'">
             <div class="card-top">
-
               <div>
                 <h2 class="vehicle-title">{{ vehicle.make }} {{ vehicle.model }}</h2>
                 <span class="vehicle-year">{{ vehicle.productionYear }}</span>
               </div>
-
               <span class="badge" [class.badge-success]="vehicle.status === 'ACTIVE'" [class.badge-warning]="vehicle.status === 'IN_SERVICE'">
-                {{ vehicle.status }}
+                {{ formatLabel(vehicle.status) }}
               </span>
-
             </div>
 
-            <div class="license-wrapper">
-                <div class="plate-number">{{ vehicle.licensePlate }}</div>
-            </div>
+
+            <div class="plate-number">{{ vehicle.licensePlate }}</div>
 
             <div class="card-meta">
-
               <div class="meta-row">
                 <span class="meta-label">Current Mileage:</span>
                 <span class="meta-val">{{ vehicle.currentMileage | number }} km</span>
               </div>
-
               <div class="meta-row">
                 <span class="meta-label">Fuel Type:</span>
                 <span class="tag">{{ vehicle.fuelType }}</span>
               </div>
-
               <div class="meta-row">
-                <span class="meta-label">Service History:</span>
-                <span class="meta-val">{{ vehicle.totalMaintenanceCount }} records</span>
+                <span class="meta-label">Service Records:</span>
+                <span class="meta-val">{{ vehicle.totalMaintenanceCount }}</span>
               </div>
-
             </div>
 
-            <div class="card-btn-wrap">
-              <button class="btn-main full-width">
+              <button class="btn-main full-width" (click)="openVehicleDetails(vehicle)">
                 View Service & Health
               </button>
-            </div>
           </div>
         } @empty {
           <div class="empty">
@@ -117,4 +99,135 @@
       </section>
     }
   </main>
+
+  @if (selectedVehicle(); as vehicle) {
+    <div class="overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+
+        <div class="modal-head">
+          <div>
+            <h2>{{ vehicle.make }} {{ vehicle.model }} ({{ vehicle.productionYear }})</h2>
+            <div class="plate-number">{{ vehicle.licensePlate }}</div>
+          </div>
+        </div>
+
+        @if (isModalLoading()) {
+          <div class="empty">Loading vehicle analytics...</div>
+        } @else {
+          @if (vehicleHealth(); as h) {
+            <div class="health-banner" [class]="getHealthScoreClass(h.healthScore)">
+              <div class="health-main">
+                <div class="score-plain">
+                  <span class="score-num">{{ h.healthScore }}%</span>
+                  <span class="score-label">Health</span>
+                </div>
+                <div class="health-info">
+                  <div class="health-title">Status: <strong>{{ formatLabel(h.healthStatus) }}</strong></div>
+                  @if (h.remainingKmToService > 0) {
+                    <p>Next service in <strong>{{ h.remainingKmToService | number }} km</strong></p>
+                  } @else {
+                    <p class="text-danger">Service is overdue by <strong>{{ -h.remainingKmToService | number }} km</strong>. Immediate inspection required.</p>
+                  }
+                </div>
+              </div>
+              <div class="tco-box">
+                <div class="tco-label">Cost per km</div>
+                <div class="tco-val">{{ h.costPerKilometer | number:'1.4-4' }} <small>PLN/km</small></div>
+                <div class="tco-total">Total spend: {{ h.totalMaintenanceCost | number:'1.2-2' }} PLN</div>
+              </div>
+            </div>
+          }
+
+          <div class="section-head">
+            <h3>Maintenance History ({{ maintenanceRecords().length }})</h3>
+            <button class="btn-small btn-main" (click)="toggleAddForm()">
+              {{ showAddForm() ? 'Cancel' : '+ Add Service Record' }}
+            </button>
+          </div>
+
+          @if (showAddForm()) {
+            <form class="service-form" (ngSubmit)="submitNewService()">
+              <h4>Log New Maintenance</h4>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Service Date</label>
+                  <input type="date" [(ngModel)]="newService.serviceDate" name="serviceDate" required>
+                </div>
+                <div class="field">
+                  <label>Mileage at Service (km)</label>
+                  <input type="number" [(ngModel)]="newService.mileageAtService" name="mileageAtService" required min="0">
+                </div>
+                <div class="field">
+                  <label>Service Type</label>
+                  <select [(ngModel)]="newService.serviceType" name="serviceType">
+                    @for (type of serviceTypes; track type) {
+                      <option [value]="type">{{ formatLabel(type) }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Cost (PLN)</label>
+                  <input type="number" [(ngModel)]="newService.cost" name="cost" required min="0" step="0.01">
+                </div>
+                <div class="field field-full">
+                  <label>Description / Notes</label>
+                  <input type="text" [(ngModel)]="newService.description" name="description" placeholder="e.g., Oil and filter change 5W30">
+                </div>
+              </div>
+              @if (formError(); as err) {
+                <div class="form-error">
+                  {{ err }}
+                </div>
+              }
+              <div class="actions">
+                <button type="button" (click)="toggleAddForm()">Cancel</button>
+                <button type="submit" class="btn-main">Save Record</button>
+              </div>
+            </form>
+          }
+
+          @if (maintenanceRecords().length > 0) {
+            <div class="table-wrap">
+              <table>
+                <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Mileage</th>
+                  <th>Cost</th>
+                  <th>Notes</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (record of maintenanceRecords(); track record.id) {
+                    <tr>
+                      <td class="nowrap">{{ record.serviceDate }}</td>
+                      <td><span class="tag">{{ formatLabel(record.serviceType) }}</span></td>
+                      <td class="nowrap">{{ record.mileageAtService | number }} km</td>
+                      <td class="nowrap"><strong>{{ record.cost | number:'1.2-2' }} PLN</strong></td>
+                      <td class="desc-cell">{{ record.description || '-' }}</td>
+                      <td>
+                        <button class="btn-danger-text" (click)="deleteServiceRecord(record.id)">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty">
+              <p>No maintenance logs recorded for this vehicle yet.</p>
+            </div>
+          }
+        }
+
+        <div class="actions">
+          <button (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
