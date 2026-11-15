@@ -6,6 +6,12 @@ Developed as a recruitment technical showcase following clean architecture, resp
 
 ---
 
+## Application Demo
+
+[![Watch the demo](demo.mp4)](demo.mp4)
+
+  
+
 ## Tech Stack
 
 ### Backend
