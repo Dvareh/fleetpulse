@@ -7,8 +7,7 @@ Developed as a recruitment technical showcase following clean architecture, resp
 ---
 
 ## Application Demo
-
-[![Watch the demo](demo.mp4)](demo.mp4)
+https://github.com/user-attachments/assets/fec9b1d9-bf78-42c9-a623-5aee4ee35f17
 
   
 
