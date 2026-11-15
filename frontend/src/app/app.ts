@@ -129,6 +129,7 @@ export class App implements OnInit {
     this.selectedVehicle.set(vehicle);
     this.showAddForm.set(false);
     this.newService.mileageAtService = vehicle.currentMileage;
+    this.newService.nextServiceIntervalKm = 15000;
     this.loadVehicleDetails(vehicle.id);
   }
 
@@ -172,6 +173,7 @@ export class App implements OnInit {
         this.showAddForm.set(false);
         this.newService.description = '';
         this.newService.cost = 0;
+        this.newService.nextServiceIntervalKm = 15000;
         this.loadVehicleDetails(vehicle.id);
         this.loadFleetData();
       },
